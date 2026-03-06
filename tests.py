@@ -2,7 +2,7 @@ import pytest
 from datetime import date, datetime, time, timedelta
 
 # Update import path to match your project structure:
-from solution import TimeWindow, BusyInterval, Slot, suggest_slots
+from solution import TimeWindow, BusyInterval, Slot, suggest_slots, InfeasibleSchedule
 
 
 # ---------- Helpers ----------
@@ -179,3 +179,137 @@ def test_a5_buffer_eliminates_small_gaps():
 #################################################################################
 # Add your own additional tests here to cover more cases and edge cases as needed.
 #################################################################################
+
+def test_ac8_zero_duration_raises_value_error():
+    """
+    (NEW - Made during the implementation)
+    Constraint 8: Duration must be greater than 0.
+
+    AC8:
+    Given the user enters a duration time that is 0
+    When the system processes the duration time
+    Then the system should return a value error.
+    Linked Constraint ID: C8
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=0),
+            n=5
+        )
+
+def test_ac9_negative_buffer_raises_value_error():
+    """
+    (NEW - Made during the implementation)
+    Constraint 9: Buffer must be greater than or equal to 0.
+
+    AC9:
+    Given the user enters a buffer time that is negative
+    When the system processes the buffer time
+    Then the system should return a value error.
+    Linked Constraint ID: C9
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=5,
+            buffer=timedelta(minutes=-5)
+        )
+
+def test_ac10_negative_n_raises_value_error():
+    """
+    (NEW - Made during the implementation)
+    Constraint 10: Buffer must be greater than or equal to 0.
+
+    AC10:
+    Given the user enters an N that is negative
+    When the system processes N
+    Then the system should return a value error.
+    Linked Constraint ID: C10
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=-1
+        )
+
+def test_ec1_duration_one_minute():
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(9, 10))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=1),
+        n=5
+    )
+
+    assert len(slots) == 5
+    assert slots[0].start_time == time(9, 0)
+
+def test_ec2_n_zero_returns_empty_list():
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=30),
+        n=0
+    )
+
+    assert slots == []
+
+def test_candidate_window_conflicts_with_working_hours():
+    """
+    (NEW - Made during the implementation)
+
+    This test covers a scenario where the provided candidate window
+    does not overlap with working hours, resulting in a logical contradiction.
+
+    To deal with this situation, an assumption was made that the system will throw an InfeasibleSchedule error.
+    """
+    day = date(2026, 3, 1)
+
+    working = TimeWindow(time(9, 0), time(12, 0))
+
+    candidate = TimeWindow(
+        time(13, 0),
+        time(15, 0)
+    )
+
+    busy = []
+
+    with pytest.raises(InfeasibleSchedule):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=5,
+            candidate_window=candidate
+        )
