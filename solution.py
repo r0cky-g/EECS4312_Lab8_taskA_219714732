@@ -1,5 +1,5 @@
-## Student Name:
-## Student ID:
+## Student Name: Rocco Fernando Gadista
+## Student ID: 219714732
 
 """
 Task A: Appointment Timeslot Recommender (Stub)
@@ -86,6 +86,38 @@ class InfeasibleSchedule(Exception):
     """Raised when no valid slots can be produced (if required by handout)."""
     pass
 
+# ---------------- Helper Functions ----------------
+
+def combine(day: date, t: time) -> datetime:
+    return datetime.combine(day, t)
+
+
+def merge_busy_intervals(busy: List[BusyInterval], day: date) -> List[tuple]:
+    """
+    Merge overlapping busy intervals.
+    Returns list of (start_datetime, end_datetime).
+    """
+
+    if not busy:
+        return []
+
+    intervals = sorted(
+        [(combine(day, b.start), combine(day, b.end)) for b in busy],
+        key=lambda x: x[0]
+    )
+
+    merged = []
+    current_start, current_end = intervals[0]
+
+    for start, end in intervals[1:]:
+        if start <= current_end:  # overlap
+            current_end = max(current_end, end)
+        else:
+            merged.append((current_start, current_end))
+            current_start, current_end = start, end
+
+    merged.append((current_start, current_end))
+    return merged
 
 # ---------------- Core Function ----------------
 
@@ -124,5 +156,64 @@ def suggest_slots(
     ##################################################################
     # TODO: Implement as per lab handout requirements and constraints.
     ##################################################################
-    
-    raise NotImplementedError("suggest_slots has not been implemented yet")
+
+    if duration <= timedelta(0):
+        raise ValueError("Duration must be positive")
+
+    if buffer < timedelta(0):
+        raise ValueError("Buffer must be non-negative")
+
+    if n <= 0:
+        return []
+
+    work_start = combine(day, working_hours.start)
+    work_end = combine(day, working_hours.end)
+
+    if work_start >= work_end:
+        raise ValueError("Invalid working hours")
+
+    # Apply candidate window
+    if candidate_window:
+        cand_start = combine(day, candidate_window.start)
+        cand_end = combine(day, candidate_window.end)
+
+        effective_start = max(work_start, cand_start)
+        effective_end = min(work_end, cand_end)
+
+        if effective_start >= effective_end:
+            raise InfeasibleSchedule("Candidate window conflicts with working hours")
+    else:
+        effective_start = work_start
+        effective_end = work_end
+
+    # Merge busy intervals
+    merged_busy = merge_busy_intervals(busy_intervals, day)
+
+    # Apply buffer AFTER meetings
+    buffered_busy = [(start, end + buffer) for start, end in merged_busy]
+
+    slots: List[Slot] = []
+
+    current = effective_start
+
+    step = timedelta(minutes=1)
+
+    while current + duration <= effective_end and len(slots) < n:
+
+        meeting_end = current + duration
+
+        overlap = False
+
+        for busy_start, busy_end in buffered_busy:
+            if not (meeting_end <= busy_start or current >= busy_end):
+                overlap = True
+                break
+
+        if not overlap:
+            slots.append(Slot(start_time=current.time()))
+
+        current += step
+
+    return slots
+
+    # raise NotImplementedError("suggest_slots has not been implemented yet")
