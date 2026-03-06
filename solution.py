@@ -162,8 +162,11 @@ def suggest_slots(
 
     if buffer < timedelta(0):
         raise ValueError("Buffer must be non-negative")
+    
+    if n < 0:
+        raise ValueError("n must be non-negative")
 
-    if n <= 0:
+    if n == 0:
         return []
 
     work_start = combine(day, working_hours.start)
