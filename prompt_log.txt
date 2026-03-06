@@ -1611,3 +1611,418 @@ Candidate window:13:00–15:00
 
 ✅ If you want, I can also show **3–4 additional “professor-level edge cases”** that commonly appear in scheduling labs (adjacent meetings, exact boundary fits, merged buffers, etc.). These often catch bugs that basic tests miss.
 --------------------------------------------------
+Note: New day, free GPT chat was reset.
+
+Prompt 5:
+
+Here is my python code for an appointment slot recommendation system:
+
+from dataclasses import dataclass
+from datetime import date, datetime, timedelta, time
+from typing import List, Optional, Tuple
+
+
+# ---------------- Data Models ----------------
+
+@dataclass(frozen=True)
+class TimeWindow:
+    """
+    A daily time window.
+    Assumption (unless stated otherwise in handout): non-wrapping window where start < end.
+    """
+    start: time
+    end: time
+
+
+@dataclass(frozen=True)
+class BusyInterval:
+    """
+    A busy interval on the given day.
+    Invariant: start < end
+    """
+    start: time
+    end: time
+
+
+@dataclass(frozen=True)
+class Slot:
+    """
+    A recommended appointment slot.
+
+    start_time is a time-of-day within the working window.
+    Deterministic ordering: sort by start_time ascending.
+    """
+    start_time: time
+
+
+class InfeasibleSchedule(Exception):
+    """Raised when no valid slots can be produced (if required by handout)."""
+    pass
+
+# ---------------- Helper Functions ----------------
+
+def combine(day: date, t: time) -> datetime:
+    return datetime.combine(day, t)
+
+
+def merge_busy_intervals(busy: List[BusyInterval], day: date) -> List[tuple]:
+    """
+    Merge overlapping busy intervals.
+    Returns list of (start_datetime, end_datetime).
+    """
+
+    if not busy:
+        return []
+
+    intervals = sorted(
+        [(combine(day, b.start), combine(day, b.end)) for b in busy],
+        key=lambda x: x[0]
+    )
+
+    merged = []
+    current_start, current_end = intervals[0]
+
+    for start, end in intervals[1:]:
+        if start <= current_end:  # overlap
+            current_end = max(current_end, end)
+        else:
+            merged.append((current_start, current_end))
+            current_start, current_end = start, end
+
+    merged.append((current_start, current_end))
+    return merged
+
+# ---------------- Core Function ----------------
+
+def suggest_slots(
+    day: date,
+    working_hours: TimeWindow,
+    busy_intervals: List[BusyInterval],
+    duration: timedelta,
+    n: int,
+    buffer: timedelta = timedelta(0),
+    candidate_window: Optional[TimeWindow] = None
+) -> List[Slot]:
+    """
+    Suggest up to the next n valid appointment slots (start times) for the given day.
+
+    Args:
+        day: the calendar day for which to suggest slots.
+        working_hours: the allowed working window for meetings (start < end).
+        busy_intervals: list of busy time intervals (may be overlapping / unsorted).
+        duration: required meeting length (must be > 0).
+        n: maximum number of slot suggestions to return (n >= 0).
+        buffer: optional buffer time required between meetings (buffer >= 0).
+        candidate_window: optional extra restriction on suggestions (must lie within this window too).
+
+    Returns:
+        A list of Slot objects, sorted by start_time ascending, deterministic under identical inputs.
+        If no suitable time slots are available, return an empty list.
+
+    Notes:
+        - Suggested slots must fall within working_hours (and candidate_window if provided).
+        - Suggested slots must not overlap busy_intervals, considering buffer time.
+        - You are free to choose internal representation; inputs use time-of-day.
+        - See lab handout for required slot granularity (e.g., 5-min/15-min steps), if any.
+    """
+
+    ##################################################################
+    # TODO: Implement as per lab handout requirements and constraints.
+    ##################################################################
+
+    if duration <= timedelta(0):
+        raise ValueError("Duration must be positive")
+
+    if buffer < timedelta(0):
+        raise ValueError("Buffer must be non-negative")
+    
+    if n < 0:
+        raise ValueError("n must be non-negative")
+
+    if n == 0:
+        return []
+
+    work_start = combine(day, working_hours.start)
+    work_end = combine(day, working_hours.end)
+
+    if work_start >= work_end:
+        raise ValueError("Invalid working hours")
+
+    # Apply candidate window
+    if candidate_window:
+        cand_start = combine(day, candidate_window.start)
+        cand_end = combine(day, candidate_window.end)
+
+        effective_start = max(work_start, cand_start)
+        effective_end = min(work_end, cand_end)
+
+        if effective_start >= effective_end:
+            raise InfeasibleSchedule("Candidate window conflicts with working hours")
+    else:
+        effective_start = work_start
+        effective_end = work_end
+
+    # Merge busy intervals
+    merged_busy = merge_busy_intervals(busy_intervals, day)
+
+    # Apply buffer BEFORE and AFTER meetings
+    buffered_busy = [(start - buffer, end + buffer) for start, end in merged_busy]
+
+    slots: List[Slot] = []
+
+    current = effective_start
+
+    step = timedelta(minutes=1)
+
+    while current + duration <= effective_end and len(slots) < n:
+
+        meeting_end = current + duration
+
+        overlap = False
+
+        for busy_start, busy_end in buffered_busy:
+            if not (meeting_end <= busy_start or current >= busy_end):
+                overlap = True
+                break
+
+        if not overlap:
+            slots.append(Slot(start_time=current.time()))
+
+        current += step
+
+    return slots
+
+Can you make a test case that fits this acceptance criteria:
+
+AC11:
+Given the user enters working hours, list of busy intervals, and duration,
+When the system returns the list of slots,
+Then the list should contain slots that have a granularity of 1 minute.
+Linked Constraint ID: C11
+
+The acceptance criteria relates to this specific constraint:
+
+11. Slot granularity is 1 minute.
+
+Response 5:
+
+To satisfy **AC11 (Slot granularity is 1 minute)**, the test must verify that **consecutive suggested slots differ by exactly 1 minute** when there are no blocking constraints.
+
+A simple way to guarantee this is to:
+
+* Give **no busy intervals**
+* Provide **ample working hours**
+* Ask for several slots
+* Check that each slot is **exactly 1 minute apart**
+
+Below is a clean **unit test example (pytest style)**.
+
+---
+
+## Test Case for AC11
+
+```python
+from datetime import date, time, timedelta
+
+def test_slot_granularity_one_minute():
+    day = date(2026, 3, 6)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy_intervals = []
+
+    duration = timedelta(minutes=10)
+
+    n = 5
+
+    slots = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy_intervals,
+        duration=duration,
+        n=n
+    )
+
+    # Ensure we received the expected number of slots
+    assert len(slots) == 5
+
+    # Verify 1-minute granularity
+    for i in range(len(slots) - 1):
+        t1 = slots[i].start_time
+        t2 = slots[i+1].start_time
+
+        delta = (
+            (t2.hour * 60 + t2.minute) -
+            (t1.hour * 60 + t1.minute)
+        )
+
+        assert delta == 1
+```
+
+---
+
+## Why This Test Validates AC11
+
+Inputs:
+
+* Working hours: **09:00–10:00**
+* No busy intervals
+* Duration: **10 minutes**
+
+Expected system behavior:
+
+```
+09:00
+09:01
+09:02
+09:03
+09:04
+```
+
+Each slot differs by **exactly 1 minute**, confirming the constraint:
+
+> **C11: Slot granularity is 1 minute**
+
+---
+
+## Even Stronger Version (Recommended for Grading)
+
+You can also check the **exact expected slots**, which makes the test stricter:
+
+```python
+expected_times = [
+    time(9,0),
+    time(9,1),
+    time(9,2),
+    time(9,3),
+    time(9,4)
+]
+
+assert [s.start_time for s in slots] == expected_times
+```
+
+---
+
+✅ If you'd like, I can also show you **3 additional AC11 edge-case tests** professors often expect:
+
+* with **busy intervals**
+* with **buffers**
+* with a **candidate window**.
+--------------------------------------------------
+
+Prompt 6:
+
+Show one with busy intervals, just like how it is shown in the acceptance criteria
+
+Response 6:
+
+To mirror the **style of an Acceptance Criteria scenario**, the test should explicitly show:
+
+* **Given**: working hours, busy intervals, duration
+* **When**: the system suggests slots
+* **Then**: the returned slots have **1-minute granularity**
+
+Below is a **test case with busy intervals** that demonstrates this clearly.
+
+---
+
+## AC11 Test Case (With Busy Intervals)
+
+**Acceptance Criteria Scenario**
+
+**Given**
+
+* Working hours: **09:00 – 10:00**
+* Busy intervals: **09:00 – 09:10**
+* Duration: **10 minutes**
+
+**When**
+
+* The system returns the list of suggested slots
+
+**Then**
+
+* The list should contain slots with **1-minute granularity**
+
+**Expected Slots**
+
+```
+09:10
+09:11
+09:12
+09:13
+09:14
+```
+
+Each slot differs by exactly **1 minute**, satisfying **Constraint C11**.
+
+---
+
+## Python Test Implementation
+
+```python
+from datetime import date, time, timedelta
+
+def test_ac11_slot_granularity_with_busy_interval():
+
+    day = date(2026, 3, 6)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy_intervals = [
+        BusyInterval(start=time(9, 0), end=time(9, 10))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    n = 5
+
+    slots = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy_intervals,
+        duration=duration,
+        n=n
+    )
+
+    expected_times = [
+        time(9, 10),
+        time(9, 11),
+        time(9, 12),
+        time(9, 13),
+        time(9, 14),
+    ]
+
+    assert [s.start_time for s in slots] == expected_times
+```
+
+---
+
+## Why This Demonstrates C11
+
+* The **busy interval blocks 09:00–09:10**.
+* The **first possible meeting start** becomes **09:10**.
+* Because your algorithm increments by:
+
+```python
+step = timedelta(minutes=1)
+```
+
+the next valid slots are:
+
+```
+09:10 → 09:11 → 09:12 → 09:13 → 09:14
+```
+
+This confirms the **slot granularity constraint (1 minute)**.
+
+---
+
+If you want, I can also show a **very strong AC11 example professors love** where the busy interval sits **in the middle of the day**, proving the algorithm still maintains **1-minute granularity both before and after the conflict**.
+--------------------------------------------------
