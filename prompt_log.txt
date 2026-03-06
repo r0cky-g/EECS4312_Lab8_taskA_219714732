@@ -1377,3 +1377,237 @@ Fix:
 If you'd like, I can also show a **much cleaner scheduling algorithm (used in real calendar systems)** that avoids scanning minute-by-minute and would likely impress your professor.
 
 --------------------------------------------------
+
+Prompt 4:
+
+Can you make a python test for each acceptance criteria:
+
+AC8:
+Given the user enters a duration time that is 0
+When the system processes the duration time,
+Then the system should return a value error.
+
+AC9:
+Given the user enters a buffer time that is negative
+When the system processes the buffer time,
+Then the system should return a value error.
+
+AC10:
+Given the user enters an N that is negative
+When the system processes the N,
+Then the system should return a value error.
+Linked Constraint ID: C10
+
+Also for each edge case:
+
+EC1:
+Description: Duration time is 1 minute long.
+Linked Constraint ID: C3
+Covered by Acceptance Criteria ID: AC3
+EC2:
+Description: Number of N is 0.
+Linked Constraint ID: C6
+Covered by Acceptance Criteria ID: AC6
+
+Also make a test case where the working hours contradicts with the given candidate time window. The expected result is an InfeasibleSchedule error.
+
+Response 4:
+
+Below are **clean Python tests (pytest style)** for the new **acceptance criteria (AC8–AC10)** and **edge cases (EC1–EC2)**, plus the **candidate window contradiction test**.
+
+They follow the same style as the tests you showed earlier.
+
+---
+
+# Tests for New Acceptance Criteria
+
+```python
+import pytest
+from datetime import date, time, timedelta
+
+# AC8
+def test_ac8_zero_duration_raises_value_error():
+    """
+    AC8:
+    Given the user enters a duration time that is 0
+    When the system processes the duration time
+    Then the system should return a ValueError.
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=0),
+            n=5
+        )
+
+
+# AC9
+def test_ac9_negative_buffer_raises_value_error():
+    """
+    AC9:
+    Given the user enters a buffer time that is negative
+    When the system processes the buffer time
+    Then the system should return a ValueError.
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=5,
+            buffer=timedelta(minutes=-5)
+        )
+
+
+# AC10
+def test_ac10_negative_n_raises_value_error():
+    """
+    AC10:
+    Given the user enters an N that is negative
+    When the system processes N
+    Then the system should return a ValueError.
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    with pytest.raises(ValueError):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=-1
+        )
+```
+
+---
+
+# Edge Case Tests
+
+## EC1 — Duration = 1 minute
+
+```python
+def test_ec1_duration_one_minute():
+    """
+    EC1:
+    Description: Duration time is 1 minute long.
+    Linked Constraint ID: C3
+    Covered by AC3
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(9, 10))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=1),
+        n=5
+    )
+
+    assert len(slots) == 5
+    assert slots[0].start_time == time(9, 0)
+```
+
+This verifies the algorithm works with **minimal valid duration**.
+
+---
+
+## EC2 — N = 0
+
+```python
+def test_ec2_n_zero_returns_empty_list():
+    """
+    EC2:
+    Description: Number of N is 0.
+    Linked Constraint ID: C6
+    Covered by AC6
+    """
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=30),
+        n=0
+    )
+
+    assert slots == []
+```
+
+This confirms the system **respects the N constraint**.
+
+---
+
+# Candidate Window Contradiction Test
+
+```python
+def test_candidate_window_conflicts_with_working_hours():
+    """
+    If candidate window does not overlap with working hours,
+    the system should raise InfeasibleSchedule.
+    """
+    day = date(2026, 3, 1)
+
+    working = TimeWindow(time(9, 0), time(12, 0))
+
+    candidate = TimeWindow(
+        time(13, 0),
+        time(15, 0)
+    )
+
+    busy = []
+
+    with pytest.raises(InfeasibleSchedule):
+        suggest_slots(
+            day,
+            working,
+            busy,
+            duration=timedelta(minutes=30),
+            n=5,
+            candidate_window=candidate
+        )
+```
+
+Example contradiction:
+
+```
+Working hours:   09:00–12:00
+Candidate window:13:00–15:00
+```
+
+→ **No overlap** → `InfeasibleSchedule`.
+
+---
+
+# Summary of Added Tests
+
+| Test                                                 | Purpose                    |
+| ---------------------------------------------------- | -------------------------- |
+| `test_ac8_zero_duration_raises_value_error`          | Duration cannot be 0       |
+| `test_ac9_negative_buffer_raises_value_error`        | Buffer cannot be negative  |
+| `test_ac10_negative_n_raises_value_error`            | N cannot be negative       |
+| `test_ec1_duration_one_minute`                       | Smallest valid duration    |
+| `test_ec2_n_zero_returns_empty_list`                 | Return no slots when N=0   |
+| `test_candidate_window_conflicts_with_working_hours` | Detect infeasible schedule |
+
+---
+
+✅ If you want, I can also show **3–4 additional “professor-level edge cases”** that commonly appear in scheduling labs (adjacent meetings, exact boundary fits, merged buffers, etc.). These often catch bugs that basic tests miss.
+--------------------------------------------------
