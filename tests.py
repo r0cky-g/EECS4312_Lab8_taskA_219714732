@@ -253,6 +253,53 @@ def test_ac10_negative_n_raises_value_error():
             n=-1
         )
 
+from datetime import date, time, timedelta
+
+def test_ac11_slot_granularity_with_busy_interval():
+    """
+    (NEW - Made during the implementation)
+    Constraint 11: Slot granularity is 1 minute.
+
+    AC11:
+    Given the user enters working hours, list of busy intervals, and duration,
+    When the system returns the list of slots,
+    Then the list should contain slots that have a granularity of 1 minute.
+    Linked Constraint ID: C11
+    """
+
+    day = date(2026, 3, 6)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy_intervals = [
+        BusyInterval(start=time(9, 0), end=time(9, 10))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    n = 5
+
+    slots = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy_intervals,
+        duration=duration,
+        n=n
+    )
+
+    expected_times = [
+        time(9, 10),
+        time(9, 11),
+        time(9, 12),
+        time(9, 13),
+        time(9, 14),
+    ]
+
+    assert [s.start_time for s in slots] == expected_times
+
 def test_ec1_duration_one_minute():
     day = date(2026, 3, 1)
     working = TimeWindow(time(9, 0), time(9, 10))
