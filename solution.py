@@ -192,8 +192,8 @@ def suggest_slots(
     # Merge busy intervals
     merged_busy = merge_busy_intervals(busy_intervals, day)
 
-    # Apply buffer AFTER meetings
-    buffered_busy = [(start, end + buffer) for start, end in merged_busy]
+    # Apply buffer BEFORE and AFTER meetings
+    buffered_busy = [(start - buffer, end + buffer) for start, end in merged_busy]
 
     slots: List[Slot] = []
 
