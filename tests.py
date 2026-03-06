@@ -255,7 +255,7 @@ def test_ac10_negative_n_raises_value_error():
 
 from datetime import date, time, timedelta
 
-def test_ac11_slot_granularity_with_busy_interval():
+def test_ac11_slot_granularity():
     """
     (NEW - Made during the implementation)
     Constraint 11: Slot granularity is 1 minute.
