@@ -374,14 +374,17 @@ def test_ec2_n_zero_returns_empty_list():
 
     assert slots == []
 
-def test_candidate_window_conflicts_with_working_hours():
+def test_ac12_candidate_window_conflicts_with_working_hours():
     """
     (NEW - Made during the implementation)
 
-    This test covers a scenario where the provided candidate window
-    does not overlap with working hours, resulting in a logical contradiction.
+    Constraint 12. Candidate window must occur within working hours.
 
-    To deal with this situation, an assumption was made that the system will throw an InfeasibleSchedule error.
+    AC12:
+    Given the user enters working hours, list of busy intervals, duration, and candidate window
+    When the system discovers that the candidate window does not occur within the working hours,
+    Then throw an error.
+    Linked Constraint ID: C12
     """
     day = date(2026, 3, 1)
 
