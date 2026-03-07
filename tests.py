@@ -179,6 +179,49 @@ def test_a5_buffer_eliminates_small_gaps():
 #################################################################################
 # Add your own additional tests here to cover more cases and edge cases as needed.
 #################################################################################
+def test_ac6_returns_less_than_n_when_not_enough_slots():
+    """
+    (Edited - Changed made during implementation)
+
+    Constraint 6. The system respects the N provided, only returning N appointment slots,  
+    or less if the available slots are less than N.
+
+    AC6:
+    Given the user enters a number N in the system,
+    When the system returns the list of slots,
+    Then the list should only contain N appointment slots, or less if the available slots are less than N.
+    Linked Constraint ID: C6
+    """
+
+    day = date(2026, 3, 6)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    # Busy blocks leaving only one possible slot
+    busy_intervals = [
+        BusyInterval(start=time(9, 10), end=time(10, 0))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    n = 5  # User requests 5 slots, but fewer are available
+
+    slots = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy_intervals,
+        duration=duration,
+        n=n
+    )
+
+    # Only one slot should exist: 09:00–09:10
+    assert len(slots) < n
+    assert len(slots) == 1
+    assert slots[0].start_time == time(9, 0)
+    
 
 def test_ac8_zero_duration_raises_value_error():
     """
