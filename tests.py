@@ -230,7 +230,7 @@ def test_ac8_zero_duration_raises_value_error():
     AC8:
     Given the user enters a duration time that is 0
     When the system processes the duration time
-    Then the system should return a value error.
+    Then the system should return an error.
     Linked Constraint ID: C8
     """
     day = date(2026, 3, 1)
@@ -254,7 +254,7 @@ def test_ac9_negative_buffer_raises_value_error():
     AC9:
     Given the user enters a buffer time that is negative
     When the system processes the buffer time
-    Then the system should return a value error.
+    Then the system should return an error.
     Linked Constraint ID: C9
     """
     day = date(2026, 3, 1)
@@ -279,7 +279,7 @@ def test_ac10_negative_n_raises_value_error():
     AC10:
     Given the user enters an N that is negative
     When the system processes N
-    Then the system should return a value error.
+    Then the system should return an error.
     Linked Constraint ID: C10
     """
     day = date(2026, 3, 1)
