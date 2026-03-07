@@ -2026,3 +2026,93 @@ This confirms the **slot granularity constraint (1 minute)**.
 
 If you want, I can also show a **very strong AC11 example professors love** where the busy interval sits **in the middle of the day**, proving the algorithm still maintains **1-minute granularity both before and after the conflict**.
 --------------------------------------------------
+
+Prompt 7:
+Can you make a python test case that reflects this acceptance criteria:
+
+AC6:
+Given the user enters a number N in the system,
+When the system returns the list of slots,
+Then the list should only contain N or less appointment slots if the available slots are less than N.
+
+Linked Constraint ID: C6
+
+Response 7:
+
+To test **AC6 / Constraint C6**, the test should verify that:
+
+* The user requests **N slots**.
+* If **fewer than N valid slots exist**, the system returns **only the available ones**, not N.
+
+Below is a **simple `pytest` unit test** for that behavior.
+
+```python
+import pytest
+from datetime import date, time, timedelta
+
+def test_returns_less_than_n_when_not_enough_slots():
+    """
+    AC6 / C6:
+    If user requests N slots but fewer are available,
+    system should return only the available ones.
+    """
+
+    day = date(2026, 3, 6)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    # Busy blocks leaving only one possible slot
+    busy_intervals = [
+        BusyInterval(start=time(9, 10), end=time(10, 0))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    n = 5  # User requests 5 slots, but fewer are available
+
+    slots = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy_intervals,
+        duration=duration,
+        n=n
+    )
+
+    # Only one slot should exist: 09:00–09:10
+    assert len(slots) < n
+    assert len(slots) == 1
+    assert slots[0].start_time == time(9, 0)
+```
+
+### What this test verifies
+
+* **User requests:** `n = 5`
+* **Actual availability:** only **1 valid slot**
+* **Expected behavior:** function returns **1 slot**, not 5.
+
+### Why this scenario works
+
+Working hours:
+`09:00 → 10:00`
+
+Busy interval:
+`09:10 → 10:00`
+
+Meeting duration:
+`10 minutes`
+
+So the **only valid slot** is:
+
+```
+09:00–09:10
+```
+
+Thus the returned list must contain **≤ N** slots.
+
+---
+
+If you'd like, I can also show a **cleaner test suite with 3 AC6 edge cases** (exactly N, fewer than N, and zero slots), which usually gets **better grading in labs**.
+--------------------------------------------------
