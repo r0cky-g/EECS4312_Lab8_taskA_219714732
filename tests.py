@@ -222,7 +222,6 @@ def test_ac6_returns_less_than_n_when_not_enough_slots():
     assert len(slots) == 1
     assert slots[0].start_time == time(9, 0)
     
-
 def test_ac8_zero_duration_raises_value_error():
     """
     (NEW - Made during the implementation)
@@ -296,8 +295,6 @@ def test_ac10_negative_n_raises_value_error():
             n=-1
         )
 
-from datetime import date, time, timedelta
-
 def test_ac11_slot_granularity():
     """
     (NEW - Made during the implementation)
@@ -343,37 +340,6 @@ def test_ac11_slot_granularity():
 
     assert [s.start_time for s in slots] == expected_times
 
-def test_ec1_duration_one_minute():
-    day = date(2026, 3, 1)
-    working = TimeWindow(time(9, 0), time(9, 10))
-    busy = []
-
-    slots = suggest_slots(
-        day,
-        working,
-        busy,
-        duration=timedelta(minutes=1),
-        n=5
-    )
-
-    assert len(slots) == 5
-    assert slots[0].start_time == time(9, 0)
-
-def test_ec2_n_zero_returns_empty_list():
-    day = date(2026, 3, 1)
-    working = TimeWindow(time(9, 0), time(17, 0))
-    busy = []
-
-    slots = suggest_slots(
-        day,
-        working,
-        busy,
-        duration=timedelta(minutes=30),
-        n=0
-    )
-
-    assert slots == []
-
 def test_ac12_candidate_window_conflicts_with_working_hours():
     """
     (NEW - Made during the implementation)
@@ -406,3 +372,34 @@ def test_ac12_candidate_window_conflicts_with_working_hours():
             n=5,
             candidate_window=candidate
         )
+
+def test_ec1_duration_one_minute():
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(9, 10))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=1),
+        n=5
+    )
+
+    assert len(slots) == 5
+    assert slots[0].start_time == time(9, 0)
+
+def test_ec2_n_zero_returns_empty_list():
+    day = date(2026, 3, 1)
+    working = TimeWindow(time(9, 0), time(17, 0))
+    busy = []
+
+    slots = suggest_slots(
+        day,
+        working,
+        busy,
+        duration=timedelta(minutes=30),
+        n=0
+    )
+
+    assert slots == []
