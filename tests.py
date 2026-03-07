@@ -344,7 +344,7 @@ def test_ac12_candidate_window_conflicts_with_working_hours():
     """
     (NEW - Made during the implementation)
 
-    Constraint 12. Candidate window must occur within working hours.
+    Constraint 12: Candidate window must occur within working hours.
 
     AC12:
     Given the user enters working hours, list of busy intervals, duration, and candidate window
