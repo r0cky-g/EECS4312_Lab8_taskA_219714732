@@ -120,7 +120,7 @@ Linked Constraint ID: C8
 
 Can you review the specification and identify possible issues such as missing constraints, ambiguous requirements, or unhandled edge cases.
 
-Brief Summary: 
+Response 1 Summary: 
 
 GPT discovered typos, ambiguites and several edge cases in the specification provided. Most of the ambiguites that it pointed out however, was covered in the previous lab 8 such as slot time granularity, buffer time application, and merging busy intervals.
 --------------------------------------------------
@@ -128,7 +128,7 @@ Prompt 2:
 
 For adjacent slot definition, I mean it should merge if they're right near each other. For example, 9:01, 9:02, 9:03 should become 9:01-9:03, can you help me change my constraint to fit this definition
 
-Brief Summary:
+Response 2 Summary:
 
 GPT revised my constraint 3: 
 
@@ -329,7 +329,7 @@ Can you implement these features:
 
 6. The system shall throw an InfeasibleSchedule error if duration is larger than the working hours.
 
-Brief Summary:
+Response 3 Summary:
 
 GPT generated python code based on the features I stated and showed me how the code would wor.
 --------------------------------------------------
@@ -337,7 +337,7 @@ Prompt 4:
 
 I only want the start times to merge if they happen consecutively to each other. If they are not, then I just want the Slot object with the time start.
 
-Brief Summary:
+Response 4 Summary:
 
 GPT modified the merge_slots function.
 --------------------------------------------------
@@ -345,7 +345,7 @@ Prompt 5:
 
 Can you change the print_schedule_summary to affect this change
 
-Brief Summary:
+Response 5 Summary:
 
 GPT modified the print_schedule_summary as well as showed me how to call the two new functions in the system method.
 --------------------------------------------------
@@ -392,7 +392,7 @@ Description: Duration Larger than working hours.
 Linked Constraint ID(s): C5
 Covered by Acceptance Criteria ID(s): N/A
 
-Brief Summary:
+Response 6 Summary:
 
 GPT generated tests within the pytest framework that matches my acceptance critera and edge cases.
 --------------------------------------------------
@@ -400,6 +400,6 @@ Prompt 7:
 
 Can you also make sure that ec9 checks the error message in InfeasibleSchedule?
 
-Brief Summary:
+Response 7 Summary:
 
 GPT modified ec9 test to also check the error message.
