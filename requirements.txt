@@ -214,7 +214,7 @@ Revison Note 10:
 
 Requirements Edited: EC5, EC6
 Reason: Wanted the definition of adjacency to be explicit. 
-Action: Defined adjacency by explicitng saying consectively.
+Action: Defined adjacency by explicitng saying consecutively.
 
 Revison Note 11:
 
