@@ -200,23 +200,35 @@ Action: Added a new system behaviour that allows the system to display a summary
 
 Revison Note 8:
 
-Requirement Added: FR5
+Requirement Edited: FR5
 Reason: Wanted the definition of adjacency to be explicit. Also wanted to distingiush that the system merges consecutive available time slots solely for the summary page.
 Action: Redid FR4 and made the old FR4 to FR5 with the adjacency definition as well as merginig is solely for the summary page.
 
 Revison Note 9:
 
+Requirement Edited: FR6
+Reason: To compensate for the new change I made in Revision Note 8.
+Action: Made the original FR5 to FR6.
+
+Revison Note 10:
+
 Requirements Edited: EC5, EC6
 Reason: Wanted the definition of adjacency to be explicit. 
 Action: Defined adjacency by explicitng saying consectively.
 
-Revison Note 10:
+Revison Note 11:
 
 Requirements Edited: AC4
 Reason: Wanted to be more clear about the summary page and that is seperate from the output list.
 Action: Edited AC4 to be more clear about the summary page.
 
-Revison Note 10:
+Revison Note 12:
+
+Requirements Edited: FR4
+Reason: The previous written requirement was very vague.
+Action: Added more detail on what the summary page will display.
+
+Revison Note 13:
 
 Requirements Edited: FR4
 Reason: The previous written requirement was very vague.
