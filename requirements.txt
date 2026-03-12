@@ -1,4 +1,150 @@
-## Student Name:
-## Student ID: 
+## Student Name: Rocco Fernando Gadista
+## Student ID: 219714732
 
-Requirements #1:
+Requirements
+
+## 1. Problem Understanding - Describe the problem your system solves.
+System purpose: The system shall recommend available meeting slots within a defined working hours time window to users.
+Inputs to the system: day, working_hours, busy_intervals, duration, n, buffer, candidate_window
+Outputs produced by the system: List of slot objects and timewindows.
+Primary goal of the system: Return a chronologically ordered list of n appointment slots that satisfy all constraints.
+
+## 2. Assumptions - List assumptions about the environment, users, or inputs.
+A1: n >= 0
+A2: duration > 0
+A3: buffer >= 0
+A4: List of busy time intervals may be overlapping or unsorted.
+A5: For working hours, the start time will always be less than the end time.
+A6: The day given will not be a day where the company will have no working hours such as a holiday.
+
+## 3. Functional Requirements - Describe the main behaviors the system must perform. (Listed are the ones only derived from personas)
+FR1: If no slots are available within the working hours due to the busy intervals provided, the system will let the user know that there are no available slots in the given working hours because of the busy intervals.
+FR2: If no slots are available within the working hours because of the buffer time given, then the system will let the user know that there are no available slots in the given working hours due to the buffer time.
+FR3: If no slots are available due to not fitting in the candidate window provided, then the system will let the user know that there are no available slots in the given candidate window.
+FR4: The system shall merge adjacent available time slots in the curated available slots list before outputting.
+
+## 4. System Constraints - Constraints are conditions the system must always respect. Each constraint should reference the persona attribute it originates from.
+C1: The system must output an empty list of slots when no slots are available.
+Derived from persona attribute: Jane Adams
+
+C2: The system must be deterministic.
+Derived from persona attribute: Jane Adams
+
+C3: The system will merge adjacent available slot start times into a TimeWindow.
+Derived from persona attribute: Jane Adams
+
+C4: The system will output a print summary that will provide the day, slot time granularity, and time hour format alongside the list of appointment slots.
+Derived from persona attribute: Moe Rodriguez
+
+C5: The system will provide an error message towards the user when raising an InfeasibleSchedule type error.
+Derived from persona attribute: Moe Rodriguez
+
+C6: The system will produce a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the duration, busy intervals and the buffer time prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+C7: The system will produce a message stating that "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the busy intervals and the duration prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+C8: The system will produce a message stating that "The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the duration, busy intervals and the candidate window prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+## 5. Acceptance Criteria - Acceptance criteria define how system behavior will be verified.
+AC1:
+Given the user enters a list of busy intervals that prevents a slot to be available within the working hours,
+When the system returns the list of slots,
+Then the list of appointment slots should be empty.
+Linked Constraint ID: C1
+
+AC2:
+Given the user enters the same exact inputs in consecutive sessions.
+When the system outputs,
+Then all outputs should be exactly across all sessions.
+Linked Constraint ID: C2
+
+AC3:
+Given that the appointment slots are adjacent to each other,
+When the system is going to return the list of slots,
+Then the system should merge all adjacent appointment slots in a TimeWindow before returning the list of slots.
+Linked Constraint ID: C3
+
+AC4:
+Given the user enters a set of inputs that provides a list of available appointment slots,
+When the system returns the list of slots,
+Then the system should print a summary of information alongside the list of slots which is the day, slot time granularity, and time-hour format.
+Linked Constraint ID: C4
+
+AC5:
+Given the user enters a candidate time window that contradicts with the working hours provided,
+When the system throws an InfeasibleSchedule error,
+Then the system should also provide an error message stating that the "Candidate window conflicts with working hours."
+Linked Constraint ID: C5
+
+AC6:
+Given the user enters a combination of a list of busy intervals with the duration, and a buffer time that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C6
+
+AC7:
+Given the user enters a list of busy intervals with the duration that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C7
+
+AC8:
+Given the user enters a combination of a list of busy intervals with the duration, and a candidate window that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C8
+
+## 6. Edge Cases - Describe unusual or boundary situations the system must handle.
+EC1:
+Description: Identical non-conflicting inputs for consecutive sessions.
+Linked Constraint ID(s): C2
+
+Covered by Acceptance Criteria ID(s): AC2
+
+EC2:
+Description: Identical conflicting inputs for consecutive sessions.
+Linked Constraint ID(s): C2
+Covered by Acceptance Criteria ID(s): AC2
+
+EC3:
+Description: Zero available slots.
+Linked Constraint ID(s): C1
+Covered by Acceptance Criteria ID(s): AC1
+
+EC4:
+Description: Available slots exist.
+Linked Constraint ID(s): C3, C4
+Covered by Acceptance Criteria ID(s): C3, AC4
+
+EC5:
+Description: Available slots are adjacent to each other.
+Linked Constraint ID(s): C3
+Covered by Acceptance Criteria ID(s): AC3
+
+EC6:
+Description: Available slots are not adjacent to each other.
+Linked Constraint ID(s): C3
+Covered by Acceptance Criteria ID(s): AC3
+
+EC7: 
+Description: Combination of inputs result in unavailability of slots.
+Linked Constraint ID(s): C6, C7, C8
+Covered by Acceptance Criteria ID(s): AC6, AC7, AC8
+
+EC8: 
+Description: Candidate window does not happen within the working hours.
+Linked Constraint ID(s): C5
+Covered by Acceptance Criteria ID(s): AC5
+
+## 7. Traceability - Link functional requirements to constraints and acceptance criteria.
+FR7(From Lab8), Jane Persona -> C1 -> AC1
+FR7(From Lab8), System Description(From Lab8), Jane Persona -> C2 -> AC2
+FR4, Jane Persona -> C3 -> AC3
+FR7(From Lab8), Moe Persona -> C4 -> AC4
+FR10(From Lab8), Moe Persona -> C5 -> AC5
+FR1, Moe Persona -> C6 -> AC6
+FR2, Moe Persona -> C7 -> AC7
+FR3, Moe Persona -> C8 -> AC8
