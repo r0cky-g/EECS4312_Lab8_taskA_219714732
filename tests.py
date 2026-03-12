@@ -66,7 +66,15 @@ def assert_slots_basic_constraints(
             assert not overlaps(slot_start, slot_end, b_start, b_end)
 
 
-# ---------- Tests ----------
+#################################################################################
+# My Lab 9 Tests
+#################################################################################
+
+
+
+#################################################################################
+# Lab 8 Pre-Given Tests 
+#################################################################################
 
 def test_a1_no_busy_simple_slots():
     """
@@ -177,7 +185,7 @@ def test_a5_buffer_eliminates_small_gaps():
 
 
 #################################################################################
-# Add your own additional tests here to cover more cases and edge cases as needed.
+# My Lab 8 Tests
 #################################################################################
 def test_ac6_returns_less_than_n_when_not_enough_slots():
     """
