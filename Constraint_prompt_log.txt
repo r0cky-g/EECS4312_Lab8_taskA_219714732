@@ -1,6 +1,37 @@
-## Student Name:
-## Student ID: 
+## Student Name: Rocco Fernando Gadista
+## Student ID: 219714732
 
-Prompt #1: {}
-Response #1: {}
+Prompt 1:
+
+I have this template for constraint making by using personas:
+
+C1
+Persona: [Jane / Mo]
+Persona attribute: [for example, User expects predictable ordering”] 
+Attribute type: [Behavior/Need/Pain Point]
+Operationalization: [Converted into constraint/ Narrative only]
+Derived Constraint (if converted): [for example, “The system must produce deterministic ordering when reminders share the same timestamp.”]
+
+Current support level: [Fully supported by Lab 8 system/Partially supported/Not supported]
+
+What is the difference of operationalization and derived constraint?
+
+Purpose: To clarify the meaning and difference of operationalization and derived constraint.
+
+Response 1 Brief Summary: 
+
+GPT explains that:
+
+- Operationalization is the process of translating a persona’s attribute (like a need or pain point) into an actionable form, which is often narrative and theoretical.
+
+- Derived Constraint is the specific, actionable rule that results from the operationalization process. It can be implemented into the system.
+--------------------------------------------------
+
+Prompt 2: Give me an example.
+
+Purpose: To ask GPT to show an example of operationalization and derived constraint.
+
+Response 2 Brief Summary:
+
+GPT gave a general example for operationalization and derived constraint for an attribute "User wants to quickly find important tasks in the app."
 --------------------------------------------------
