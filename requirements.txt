@@ -144,6 +144,7 @@ Covered by Acceptance Criteria ID(s): AC5
 EC9: 
 Description: Duration Larger than working hours.
 Linked Constraint ID(s): C5
+Covered by Acceptance Criteria ID(s): N/A
 
 ## 7. Traceability - Link functional requirements to constraints and acceptance criteria.
 FR7(From Lab8), Jane Persona -> C1 -> AC1
