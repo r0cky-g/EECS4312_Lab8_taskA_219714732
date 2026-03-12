@@ -21,7 +21,7 @@ A6: The day given will not be a day where the company will have no working hours
 FR1: If no slots are available within the working hours due to the busy intervals provided, the system will let the user know that there are no available slots in the given working hours because of the busy intervals.
 FR2: If no slots are available within the working hours because of the buffer time given, then the system will let the user know that there are no available slots in the given working hours due to the buffer time.
 FR3: If no slots are available due to not fitting in the candidate window provided, then the system will let the user know that there are no available slots in the given candidate window.
-FR4: The system shall have a summary page.
+FR4: The system shall have a summary page that shows the user all available time slots in chronological order on the specific day, the time-hour format each slot is in, and the slot granularity.
 FR5: The system shall merge consecutive available time slots from the curated available slots list for the summary page.
 FR6: The system shall throw an error if duration is larger than the working hours.
 
@@ -72,7 +72,7 @@ Linked Constraint ID: C3
 AC4:
 Given the user enters a set of inputs that provides a list of available appointment slots,
 When the system returns the list of slots,
-Then the system should print a summary of information alongside the list of slots which is the day, slot time granularity, and time-hour format.
+Then the system should print a summary of information that includes the day, slot time granularity, 24 time-hour format, and the list of available start times (Slots) and time windows (Merged consecutive Slots).
 Linked Constraint ID: C4
 
 AC5:
@@ -209,3 +209,15 @@ Revison Note 9:
 Requirements Edited: EC5, EC6
 Reason: Wanted the definition of adjacency to be explicit. 
 Action: Defined adjacency by explicitng saying consectively.
+
+Revison Note 10:
+
+Requirements Edited: AC4
+Reason: Wanted to be more clear about the summary page and that is seperate from the output list.
+Action: Edited AC4 to be more clear about the summary page.
+
+Revison Note 10:
+
+Requirements Edited: FR4
+Reason: The previous written requirement was very vague.
+Action: Added more detail on what the summary page will display.
