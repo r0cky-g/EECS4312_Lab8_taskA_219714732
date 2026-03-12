@@ -119,6 +119,88 @@ def merge_busy_intervals(busy: List[BusyInterval], day: date) -> List[tuple]:
     merged.append((current_start, current_end))
     return merged
 
+def merge_slots(
+    slots: List[Slot],
+    step: timedelta,
+    day: date
+) -> List:
+
+    if not slots:
+        return []
+
+    result = []
+
+    start_dt = combine(day, slots[0].start_time)
+    prev_dt = start_dt
+    count = 1
+
+    for slot in slots[1:]:
+
+        current_dt = combine(day, slot.start_time)
+
+        if current_dt - prev_dt == step:
+            prev_dt = current_dt
+            count += 1
+        else:
+
+            # finalize previous sequence
+            if count > 1:
+                result.append(
+                    TimeWindow(
+                        start=start_dt.time(),
+                        end=prev_dt.time()
+                    )
+                )
+            else:
+                result.append(Slot(start_time=start_dt.time()))
+
+            start_dt = current_dt
+            prev_dt = current_dt
+            count = 1
+
+    # finalize last sequence
+    if count > 1:
+        result.append(
+            TimeWindow(
+                start=start_dt.time(),
+                end=prev_dt.time()
+            )
+        )
+    else:
+        result.append(Slot(start_time=start_dt.time()))
+
+    return result
+
+def print_schedule_summary(
+    day: date,
+    granularity: timedelta,
+    schedule: List
+):
+
+    print("\nAppointment Slot Summary")
+    print("------------------------")
+    print(f"Day: {day}")
+    print(f"Slot Granularity: {granularity}")
+    print("Time Format: 24-hour\n")
+
+    if not schedule:
+        print("No available appointment slots.\n")
+        return
+
+    print("Available Slots:\n")
+
+    for item in schedule:
+
+        if isinstance(item, TimeWindow):
+            print(
+                f"{item.start.strftime('%H:%M')} - {item.end.strftime('%H:%M')}"
+            )
+
+        elif isinstance(item, Slot):
+            print(
+                f"{item.start_time.strftime('%H:%M')}"
+            )
+
 # ---------------- Core Function ----------------
 
 def suggest_slots(
@@ -174,6 +256,9 @@ def suggest_slots(
 
     if work_start >= work_end:
         raise ValueError("Invalid working hours")
+    
+    if duration > (work_end - work_start):
+        raise InfeasibleSchedule("Meeting duration exceeds available working hours.")
 
     # Apply candidate window
     if candidate_window:
@@ -216,6 +301,32 @@ def suggest_slots(
             slots.append(Slot(start_time=current.time()))
 
         current += step
+
+    if not slots:
+
+        if candidate_window:
+            print(
+                "The combination of the duration, busy intervals and the candidate window "
+                "prevents a slot to be available within the provided working hours"
+            )
+
+        elif buffer > timedelta(0):
+            print(
+                "The combination of the duration, busy intervals and the buffer time "
+                "prevents a slot to be available within the provided working hours"
+            )
+
+        else:
+            print(
+                "The combination of the duration and busy intervals "
+                "prevents a slot to be available within the provided working hours"
+            )
+
+        return []
+    
+    merged_schedule = merge_slots(slots, step, day)
+
+    print_schedule_summary(day, step, merged_schedule)
 
     return slots
 
