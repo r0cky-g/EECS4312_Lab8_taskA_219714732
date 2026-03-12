@@ -149,7 +149,7 @@ Covered by Acceptance Criteria ID(s): N/A
 ## 7. Traceability - Link functional requirements to constraints and acceptance criteria.
 FR7(From Lab8), Jane Persona -> C1 -> AC1
 FR7(From Lab8), System Description(From Lab8), Jane Persona -> C2 -> AC2
-FR4, Jane Persona -> C3 -> AC3
+FR5, Jane Persona -> C3 -> AC3
 FR7(From Lab8), Moe Persona -> C4 -> AC4
 FR10(From Lab8), FR5, Moe Persona -> C5 -> AC5
 FR1, Moe Persona -> C6 -> AC6
