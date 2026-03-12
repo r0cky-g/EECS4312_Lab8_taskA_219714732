@@ -6,7 +6,7 @@ Requirements
 ## 1. Problem Understanding - Describe the problem your system solves.
 System purpose: The system shall recommend available meeting slots within a defined working hours time window to users.
 Inputs to the system: day, working_hours, busy_intervals, duration, n, buffer, candidate_window
-Outputs produced by the system: List of slot objects and timewindows.
+Outputs produced by the system: List of Slot objects and TimeWindows.
 Primary goal of the system: Return a chronologically ordered list of n appointment slots that satisfy all constraints.
 
 ## 2. Assumptions - List assumptions about the environment, users, or inputs.
@@ -17,11 +17,12 @@ A4: List of busy time intervals may be overlapping or unsorted.
 A5: For working hours, the start time will always be less than the end time.
 A6: The day given will not be a day where the company will have no working hours such as a holiday.
 
-## 3. Functional Requirements - Describe the main behaviors the system must perform. (Listed are the ones only derived from personas)
+## 3. Functional Requirements - Describe the main behaviors the system must perform. (Listed are the ones only derived for this lab)
 FR1: If no slots are available within the working hours due to the busy intervals provided, the system will let the user know that there are no available slots in the given working hours because of the busy intervals.
 FR2: If no slots are available within the working hours because of the buffer time given, then the system will let the user know that there are no available slots in the given working hours due to the buffer time.
 FR3: If no slots are available due to not fitting in the candidate window provided, then the system will let the user know that there are no available slots in the given candidate window.
 FR4: The system shall merge adjacent available time slots in the curated available slots list before outputting.
+FR5: The system shall throw an error if duration is larger than the working hours.
 
 ## 4. System Constraints - Constraints are conditions the system must always respect. Each constraint should reference the persona attribute it originates from.
 C1: The system must output an empty list of slots when no slots are available.
@@ -30,10 +31,10 @@ Derived from persona attribute: Jane Adams
 C2: The system must be deterministic.
 Derived from persona attribute: Jane Adams
 
-C3: The system will merge adjacent available slot start times into a TimeWindow.
+C3: The system will merge consecutive available slot start times that occur into sequential time increments (slot granularity) into a TimeWindow.
 Derived from persona attribute: Jane Adams
 
-C4: The system will output a print summary that will provide the day, slot time granularity, and time hour format alongside the list of appointment slots.
+C4: The system will output a print summary that will provide the day, slot time granularity, and time hour format (24-hour) alongside the list of appointment slots.
 Derived from persona attribute: Moe Rodriguez
 
 C5: The system will provide an error message towards the user when raising an InfeasibleSchedule type error.
@@ -94,7 +95,7 @@ Linked Constraint ID: C7
 AC8:
 Given the user enters a combination of a list of busy intervals with the duration, and a candidate window that prevents a slot to be available within the working hours provided,
 When the system returns the list of slots,
-Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Then the system will display a message stating that "The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours."
 Linked Constraint ID: C8
 
 ## 6. Edge Cases - Describe unusual or boundary situations the system must handle.
@@ -139,12 +140,46 @@ Description: Candidate window does not happen within the working hours.
 Linked Constraint ID(s): C5
 Covered by Acceptance Criteria ID(s): AC5
 
+EC9: 
+Description: Duration Larger than working hours.
+Linked Constraint ID(s): C5
+
 ## 7. Traceability - Link functional requirements to constraints and acceptance criteria.
 FR7(From Lab8), Jane Persona -> C1 -> AC1
 FR7(From Lab8), System Description(From Lab8), Jane Persona -> C2 -> AC2
 FR4, Jane Persona -> C3 -> AC3
 FR7(From Lab8), Moe Persona -> C4 -> AC4
-FR10(From Lab8), Moe Persona -> C5 -> AC5
+FR10(From Lab8), FR5, Moe Persona -> C5 -> AC5
 FR1, Moe Persona -> C6 -> AC6
 FR2, Moe Persona -> C7 -> AC7
 FR3, Moe Persona -> C8 -> AC8
+
+Revison Note 1:
+
+Requirement Updated: AC8
+Reason: There was a typo in the message to be displayed.
+Action: Fixed the message to be displayed be with the candidate window.
+
+Revison Note 2:
+
+Requirement Updated: C3
+Reason: Adajcent slot is very ambigous as adjacent can be interpreted in multiple ways according to GPT.
+Action: Defined adjacency based on suggestion of GPT.
+
+Revison Note 3:
+
+Requirement Updated: C4
+Reason: GPT pointed out how the time format was not defined.
+Action: Defined the time format.
+
+Revison Note 4:
+
+Requirement Added: EC9
+Reason: GPT pointed out what the system should do if the duration is larger than its working hours.
+Action: Added the new edge case.
+
+Revison Note 5:
+
+Requirement Added: FR5
+Reason: This is to help deal with the newly added edge case.
+Action: Explicity defined what the system should do if the duartion is larger than the working hours.
