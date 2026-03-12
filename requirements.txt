@@ -202,7 +202,7 @@ Revison Note 8:
 
 Requirement Edited: FR5
 Reason: Wanted the definition of adjacency to be explicit. Also wanted to distingiush that the system merges consecutive available time slots solely for the summary page.
-Action: Redid FR4 and made the old FR4 to FR5 with the adjacency definition as well as merging is solely for the summary page. Also, edited the traceability to reflect the new change.
+Action: Redid FR4 and made the old FR4 to FR5 with the adjacency definition as well as mentioning that merging is for the summary page. Also, edited the traceability to reflect the new change.
 
 Revison Note 9:
 
