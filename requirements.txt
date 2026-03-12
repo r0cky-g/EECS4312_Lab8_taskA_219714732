@@ -206,7 +206,7 @@ Action: Redid FR4 and made the old FR4 to FR5 with the adjacency definition as w
 
 Revison Note 9:
 
-Requirement Edited: FR6
+Requirement Added: FR6
 Reason: To compensate for the new change I made in Revision Note 8.
 Action: Made the original FR5 to FR6.
 
