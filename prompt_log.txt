@@ -124,7 +124,7 @@ Response 1 Summary:
 
 GPT discovered typos, ambiguites and several edge cases in the specification provided. Most of the ambiguites that it pointed out however, was covered in the previous lab 8 such as slot time granularity, buffer time application, and merging busy intervals.
 
-Decision: Accept
+Decision: Modify
 --------------------------------------------------
 Prompt 2:
 
