@@ -122,12 +122,12 @@ Linked Constraint ID(s): C3, C4
 Covered by Acceptance Criteria ID(s): C3, AC4
 
 EC5:
-Description: Available slots are adjacent to each other.
+Description: Available slots happen consecutively to each other.
 Linked Constraint ID(s): C3
 Covered by Acceptance Criteria ID(s): AC3
 
 EC6:
-Description: Available slots are not adjacent to each other.
+Description: Available slots do not happen consecutively to each other.
 Linked Constraint ID(s): C3
 Covered by Acceptance Criteria ID(s): AC3
 
@@ -202,3 +202,9 @@ Revison Note 8:
 Requirement Added: FR5
 Reason: Wanted the definition of adjacency to be explicit. Also wanted to distingiush that the system merges consecutive available time slots solely for the summary page.
 Action: Redid FR4 and made the old FR4 to FR5 with the adjacency definition as well as merginig is solely for the summary page.
+
+Revison Note 9:
+
+Requirements Edited: EC5, EC6
+Reason: Wanted the definition of adjacency to be explicit. 
+Action: Defined adjacency by explicitng saying consectively.
