@@ -69,7 +69,219 @@ def assert_slots_basic_constraints(
 #################################################################################
 # My Lab 9 Tests
 #################################################################################
+def test_ac4_print_summary(capsys):
 
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy = [
+        BusyInterval(time(9, 20), time(9, 30))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy,
+        duration=duration,
+        n=5
+    )
+
+    captured = capsys.readouterr()
+
+    assert "Appointment Slot Summary" in captured.out
+    assert "Day:" in captured.out
+    assert "Slot Granularity" in captured.out
+    assert "Time Format: 24-hour" in captured.out
+    assert "Available Slots:" in captured.out
+
+def test_ac6_combo_in_duration_busy_buffer(capsys):
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy = [
+        BusyInterval(time(9, 10), time(9, 50))
+    ]
+
+    duration = timedelta(minutes=10)
+
+    result = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy,
+        duration=duration,
+        buffer=timedelta(minutes=10),
+        n=5
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == []
+
+    assert (
+        "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+        in captured.out
+    )
+
+def test_ac7_combo_in_duration_busy(capsys):
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    busy = [
+        BusyInterval(time(9, 0), time(9, 50))
+    ]
+
+    duration = timedelta(minutes=15)
+
+    result = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy,
+        duration=duration,
+        n=5
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == []
+
+    assert (
+        "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours."
+        in captured.out
+    )
+
+def test_ac8_combo_in_duration_busy_candidate(capsys):
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(17, 0)
+    )
+
+    busy = [
+        BusyInterval(time(10, 0), time(11, 0))
+    ]
+
+    duration = timedelta(minutes=30)
+
+    candidate_window = TimeWindow(
+        start=time(10, 15),
+        end=time(10, 45)
+    )
+
+    result = suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=busy,
+        duration=duration,
+        candidate_window=candidate_window,
+        n=5
+    )
+
+    captured = capsys.readouterr()
+
+    assert result == []
+
+    assert (
+        "The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours"
+        in captured.out
+    )
+
+def test_ec2_identical_inputs_produce_same_output():
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(11, 0)
+    )
+
+    busy = [
+        BusyInterval(time(9, 30), time(10, 0))
+    ]
+
+    duration = timedelta(minutes=15)
+
+    result1 = suggest_slots(
+        day,
+        working_hours,
+        busy,
+        duration,
+        n=5
+    )
+
+    result2 = suggest_slots(
+        day,
+        working_hours,
+        busy,
+        duration,
+        n=5
+    )
+
+    assert result1 == result2
+
+def test_ec5_consecutive_slots_merge(capsys):
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(9, 10)
+    )
+
+    duration = timedelta(minutes=1)
+
+    suggest_slots(
+        day=day,
+        working_hours=working_hours,
+        busy_intervals=[],
+        duration=duration,
+        n=20
+    )
+
+    captured = capsys.readouterr()
+
+    # merged window should appear in output
+    assert "09:00 - 09:09" in captured.out
+
+def test_ec9_duration_larger_than_working_hours():
+
+    day = date(2026, 3, 10)
+
+    working_hours = TimeWindow(
+        start=time(9, 0),
+        end=time(10, 0)
+    )
+
+    duration = timedelta(hours=2)
+
+    with pytest.raises(InfeasibleSchedule) as exc_info:
+
+        suggest_slots(
+            day=day,
+            working_hours=working_hours,
+            busy_intervals=[],
+            duration=duration,
+            n=5
+        )
+
+    assert str(exc_info.value) == "Meeting duration exceeds available working hours."
 
 
 #################################################################################
