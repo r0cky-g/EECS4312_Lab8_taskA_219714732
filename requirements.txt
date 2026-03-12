@@ -32,7 +32,7 @@ Derived from persona attribute: Jane Adams
 C2: The system must be deterministic.
 Derived from persona attribute: Jane Adams
 
-C3: The system will merge consecutive available slot start times that occur in sequential time increments (slot granularity) into a TimeWindow. If they don't occur consectively, they will not be merged and be kept as a Slot.
+C3: The system will merge consecutive available slot start times that occur in sequential time increments (slot granularity) into a TimeWindow. If they don't occur consecutively, they will not be merged and be kept as a Slot.
 Derived from persona attribute: Jane Adams
 
 C4: The system will output a print summary that will provide the day, slot time granularity, and time hour format (24-hour) alongside the list of appointment slots.
