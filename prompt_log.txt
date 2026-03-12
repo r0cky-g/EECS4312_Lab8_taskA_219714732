@@ -1,3 +1,137 @@
 Prompt 1:
 
+Short System Description:
+
+I am building an appointment slot recommender. The system shall recommend available meeting slots within a defined working hours time window to users.
+
+Inputs: day, working_hours, busy_intervals, duration, n, buffer, candidate_window
+Output: Return a chronologically ordered list of n appointment slots that satisfy all constraints.
+
+Personas:
+
+1. Jane Adams (Primary User)
+
+Context. Busy professional managing daily routines and commitments who relies on
+automation to reduce cognitive load. Jane uses digital tools for medication reminders and event registrations and expects them to work reliably without manual oversight.
+Behaviors.
+• Acts quickly and rarely revisits system suggestions.
+• Trusts the system to resolve conflicts and enforce rules automatically.
+• Prefers concise outputs and minimal interaction when making decisions.
+Needs.
+• Predictable and stable ordering of reminders or system decisions.
+• Automatic handling of conflicts (e.g., reminder collisions or waitlist promotion).
+• Limited notification or information overload.
+Pain Points.
+• Receiving too many notifications or duplicate system messages.
+• Systems behave inconsistently in similar situations.
+• Having to manually resolve conflicts or check system correctness.
+
+2. Mo Rodriguez (Edge User)
+
+Context. User with accessibility needs & heightened sensitivity to uncertainty. Mo relies on explicit explanations and consistent behavior to build trust in automated systems.
+Behaviors.
+• Carefully reviews outputs and seeks explanations for system decisions.
+• Performs frequent updates (e.g., snoozing reminders or cancelling
+registrations).
+• Experiences stress when outcomes appear arbitrary or unexplained.
+Needs.
+• Deterministic system behavior under ties or conflicting conditions.
+• Clear explanations when reminders are moved, skipped, or when waitlist
+promotions occur.
+• Explicitly handle edge cases instead of silent failure.
+Pain Points.
+• Not understanding why the system changed or rejected an action.
+• Silent failures or dropped reminders/requests.
+• Inconsistent responses across repeated or boundary scenarios.
+
+Constraints Derived From Personas:
+C1: The system must output an empty list of slots when no slots are available.
+Derived from persona attribute: Jane Adams
+
+C2: The system must be deterministic.
+Derived from persona attribute: Jane Adams
+
+C3: The system will merge adjacent available slot start times into a TimeWindow.
+Derived from persona attribute: Jane Adams
+
+C4: The system will output a print summary that will provide the day, slot time granularity, and time hour format alongside the list of appointment slots.
+Derived from persona attribute: Moe Rodriguez
+
+C5: The system will provide an error message towards the user when raising an InfeasibleSchedule type error.
+Derived from persona attribute: Moe Rodriguez
+
+C6: The system will produce a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the duration, busy intervals and the buffer time prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+C7: The system will produce a message stating that "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the busy intervals and the duration prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+C8: The system will produce a message stating that "The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours" when outputting an empty list due to the fact that the combination of the duration, busy intervals and the candidate window prevent a slot to be available within the provided working hours.
+Derived from persona attribute: Moe Rodriguez
+
+Acceptance Criteria:
+AC1:
+Given the user enters a list of busy intervals that prevents a slot to be available within the working hours,
+When the system returns the list of slots,
+Then the list of appointment slots should be empty.
+Linked Constraint ID: C1
+
+AC2:
+Given the user enters the same exact inputs in consecutive sessions.
+When the system outputs,
+Then all outputs should be exactly across all sessions.
+Linked Constraint ID: C2
+
+AC3:
+Given that the appointment slots are adjacent to each other,
+When the system is going to return the list of slots,
+Then the system should merge all adjacent appointment slots in a TimeWindow before returning the list of slots.
+Linked Constraint ID: C3
+
+AC4:
+Given the user enters a set of inputs that provides a list of available appointment slots,
+When the system returns the list of slots,
+Then the system should print a summary of information alongside the list of slots which is the day, slot time granularity, and time-hour format.
+Linked Constraint ID: C4
+
+AC5:
+Given the user enters a candidate time window that contradicts with the working hours provided,
+When the system throws an InfeasibleSchedule error,
+Then the system should also provide an error message stating that the "Candidate window conflicts with working hours."
+Linked Constraint ID: C5
+
+AC6:
+Given the user enters a combination of a list of busy intervals with the duration, and a buffer time that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C6
+
+AC7:
+Given the user enters a list of busy intervals with the duration that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C7
+
+AC8:
+Given the user enters a combination of a list of busy intervals with the duration, and a candidate window that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C8
+
+Can you review the specification and identify possible issues such as missing constraints, ambiguous requirements, or unhandled edge cases.
+
 Brief Summary: 
+
+GPT discovered typos, ambiguites and several edge cases in the specification provided. Most of the ambiguites that it pointed out however, was covered in the previous lab 8 such as slot time granularity, buffer time application, and merging busy intervals.
+--------------------------------------------------
+Prompt 2:
+
+For adjacent slot definition, I mean it should merge if they're right near each other. For example, 9:01, 9:02, 9:03 should become 9:01-9:03, can you help me change my constraint to fit this definition
+
+Brief Summary:
+
+GPT revised my constraint 3: 
+
+The system will merge consecutive appointment slot start times that occur in sequential time increments (according to the system's slot time granularity) into a single TimeWindow. 
+
+The TimeWindow will start at the earliest slot start time and end at the latest consecutive slot start time in that sequence.
