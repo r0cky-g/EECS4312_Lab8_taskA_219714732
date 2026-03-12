@@ -123,6 +123,8 @@ Can you review the specification and identify possible issues such as missing co
 Response 1 Summary: 
 
 GPT discovered typos, ambiguites and several edge cases in the specification provided. Most of the ambiguites that it pointed out however, was covered in the previous lab 8 such as slot time granularity, buffer time application, and merging busy intervals.
+
+Decision: Accept
 --------------------------------------------------
 Prompt 2:
 
@@ -135,6 +137,8 @@ GPT revised my constraint 3:
 The system will merge consecutive appointment slot start times that occur in sequential time increments (according to the system's slot time granularity) into a single TimeWindow. 
 
 The TimeWindow will start at the earliest slot start time and end at the latest consecutive slot start time in that sequence.
+
+Decision: Modify
 --------------------------------------------------
 Prompt 3:
 
@@ -331,7 +335,9 @@ Can you implement these features:
 
 Response 3 Summary:
 
-GPT generated python code based on the features I stated and showed me how the code would wor.
+GPT generated python code based on the features I stated and showed me how the code would work.
+
+Decision: Accept
 --------------------------------------------------
 Prompt 4:
 
@@ -340,6 +346,8 @@ I only want the start times to merge if they happen consecutively to each other.
 Response 4 Summary:
 
 GPT modified the merge_slots function.
+
+Decision: Accept
 --------------------------------------------------
 Prompt 5:
 
@@ -348,6 +356,8 @@ Can you change the print_schedule_summary to affect this change
 Response 5 Summary:
 
 GPT modified the print_schedule_summary as well as showed me how to call the two new functions in the system method.
+
+Decision: Accept
 --------------------------------------------------
 Prompt 6:
 
@@ -395,6 +405,8 @@ Covered by Acceptance Criteria ID(s): N/A
 Response 6 Summary:
 
 GPT generated tests within the pytest framework that matches my acceptance critera and edge cases.
+
+Decision: Accept
 --------------------------------------------------
 Prompt 7:
 
@@ -403,3 +415,6 @@ Can you also make sure that ec9 checks the error message in InfeasibleSchedule?
 Response 7 Summary:
 
 GPT modified ec9 test to also check the error message.
+
+Decision: Accept
+--------------------------------------------------
