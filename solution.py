@@ -305,22 +305,13 @@ def suggest_slots(
     if not slots:
 
         if candidate_window:
-            print(
-                "The combination of the duration, busy intervals and the candidate window "
-                "prevents a slot to be available within the provided working hours"
-            )
+            print("The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours.")
 
         elif buffer > timedelta(0):
-            print(
-                "The combination of the duration, busy intervals and the buffer time "
-                "prevents a slot to be available within the provided working hours"
-            )
+            print("The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours.")
 
         else:
-            print(
-                "The combination of the duration and busy intervals "
-                "prevents a slot to be available within the provided working hours"
-            )
+            print("The combination of the duration and busy intervals prevents a slot to be available within the provided working hours.")
 
         return []
     
