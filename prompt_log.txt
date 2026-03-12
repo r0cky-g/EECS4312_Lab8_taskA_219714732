@@ -348,3 +348,58 @@ Can you change the print_schedule_summary to affect this change
 Brief Summary:
 
 GPT modified the print_schedule_summary as well as showed me how to call the two new functions in the system method.
+--------------------------------------------------
+Prompt 6:
+
+Can you make tests that uses the pytest framework that covers these acceptance criteria and edge cases:
+
+AC4:
+Given the user enters a set of inputs that provides a list of available appointment slots,
+When the system returns the list of slots,
+Then the system should print a summary of information that includes the day, slot time granularity, 24 time-hour format, and the list of available start times (Slots) and time windows (Merged consecutive Slots).
+Linked Constraint ID: C4
+
+AC6:
+Given the user enters a combination of a list of busy intervals with the duration, and a buffer time that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the buffer time prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C6
+
+AC7:
+Given the user enters a list of busy intervals with the duration that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration and busy intervals prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C7
+
+AC8:
+Given the user enters a combination of a list of busy intervals with the duration, and a candidate window that prevents a slot to be available within the working hours provided,
+When the system returns the list of slots,
+Then the system will display a message stating that "The combination of the duration, busy intervals and the candidate window prevents a slot to be available within the provided working hours."
+Linked Constraint ID: C8
+
+EC5:
+Description: Available slots happen consecutively to each other.
+Linked Constraint ID(s): C3
+Covered by Acceptance Criteria ID(s): AC3
+
+EC2:
+Description: Identical conflicting inputs for consecutive sessions.
+Linked Constraint ID(s): C2
+Covered by Acceptance Criteria ID(s): AC2
+
+EC9: 
+Description: Duration Larger than working hours.
+Linked Constraint ID(s): C5
+Covered by Acceptance Criteria ID(s): N/A
+
+Brief Summary:
+
+GPT generated tests within the pytest framework that matches my acceptance critera and edge cases.
+--------------------------------------------------
+Prompt 7:
+
+Can you also make sure that ec9 checks the error message in InfeasibleSchedule?
+
+Brief Summary:
+
+GPT modified ec9 test to also check the error message.
